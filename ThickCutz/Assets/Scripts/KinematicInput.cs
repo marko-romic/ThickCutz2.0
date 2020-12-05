@@ -29,6 +29,9 @@ public class KinematicInput : MonoBehaviour
         fallingDown,
         attacking,
         rolling,
+        guard,
+        parry,
+        slice,
     }
 
     PlayerState currentState = PlayerState.onGround;
