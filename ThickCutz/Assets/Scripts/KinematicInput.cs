@@ -13,6 +13,7 @@ public class KinematicInput : MonoBehaviour
     public float timeToMaxJumpSpeed = 0.2f;
     public float deccelerationDuration = 0.0f;
     public float maxJumpDuration = 1.2f;
+   
 
     // Horizontal movement parameters
     Vector3 movementVector;
@@ -21,6 +22,13 @@ public class KinematicInput : MonoBehaviour
 
     public Camera MainCamera;
 
+    public float eulerPitch = 0.0f;
+    public float eulerYaw = -180.0f;
+    public Quaternion CurrentRotation;
+
+    float currentFOVChangeDuration = 0.0f;
+    Vector3 _cameraOffset;
+    Vector3 CurrentOrientationFromPlayer;
 
     enum PlayerState
     {
@@ -72,6 +80,8 @@ public class KinematicInput : MonoBehaviour
         isMovingUp = false;
         isFalling = false;*/
         currentState = PlayerState.fallingDown;
+        CurrentRotation.eulerAngles += new Vector3(eulerPitch, eulerYaw, 0.0f);
+        CurrentOrientationFromPlayer = CurrentRotation * Vector3.forward;
     }
 
     void Update()
@@ -109,7 +119,10 @@ public class KinematicInput : MonoBehaviour
 
     void FixedUpdate()
     {
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.rotation.x, MainCamera.transform.rotation.eulerAngles.y,transform.rotation.z), MainCamera.GetComponent<CameraControls>().rotationSpeed);
+        Vector3 Movement = MainCamera.transform.right * input.x * speed * Time.fixedDeltaTime;
+        Movement += MainCamera.transform.forward * input.y * speed * Time.fixedDeltaTime;
+
+        //transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.rotation.x, MainCamera.transform.rotation.eulerAngles.y,transform.rotation.z), MainCamera.GetComponent<CameraControls>().rotationSpeed);
         //transform.rotation = Quaternion.Euler(0, transform.rotation.y, 0);
         //DISCO DISCO (Vector3.up, MainCamera.transform.rotation.y)
         //transform.Rotate(Vector3.up, MainCamera.transform.rotation.eulerAngles.y);
