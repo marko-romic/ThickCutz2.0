@@ -238,15 +238,15 @@ public class KinematicInput : MonoBehaviour
         rigidBody.MovePosition(targetPosition);
     }
 
-    private bool isOnGround()
-    {
-        Vector3 lineStart = transform.position;
-        Vector3 vectorToSearch = new Vector3(lineStart.x, lineStart.y - groundSearchLength, lineStart.z);
+    //private bool isOnGround()
+   // {
+     //   Vector3 lineStart = transform.position;
+      //  Vector3 vectorToSearch = new Vector3(lineStart.x, lineStart.y - groundSearchLength, lineStart.z);
 
-        Debug.DrawLine(lineStart, vectorToSearch);
+      //  Debug.DrawLine(lineStart, vectorToSearch);
 
-        return Physics.Linecast(lineStart, vectorToSearch, out currentGroundHit);
-    }
+     //   return;  //Physics.Linecast(lineStart, vectorToSearch, out currentGroundHit);
+    //}
     
     void StateMachine()
     {
