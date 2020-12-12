@@ -3,17 +3,36 @@ using System.Collections.Generic;
 using System.Transactions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class KinematicInput : MonoBehaviour
 {
-    
+
     // Jump and Fall parameters
     public float maxJumpSpeed = 1.5f;
     public float maxFallSpeed = -2.2f;
     public float timeToMaxJumpSpeed = 0.2f;
     public float deccelerationDuration = 0.0f;
     public float maxJumpDuration = 1.2f;
-   
+
+    //Roll left and right parameters
+    public float forceMult = 200;
+    public float xPos;
+    public UnityEngine.Vector3 forceVector;
+    Rigidbody rb;
+    public float decceleration = 15f;
+    public float timeElapsed;
+    public float maxTime;
+    public float chargeRate;
+    public float maxPower;
+    float zPos_0;
+    public float force = 500f;
+    public bool push;
+    public Transform cube;
+    public Transform cubeie;
+    public GameObject theSlider;
+    public GameObject spawn;
+    public Text score;
 
     // Horizontal movement parameters
     Vector3 movementVector;
@@ -60,7 +79,7 @@ public class KinematicInput : MonoBehaviour
     float angleDifferenceForward = 0.0f;
 
     // Components and helpers
-    Rigidbody rigidBody;
+    public Rigidbody rigidBody;
     Vector2 input;
     Vector3 playerSize;
 
@@ -82,6 +101,9 @@ public class KinematicInput : MonoBehaviour
         currentState = PlayerState.fallingDown;
         CurrentRotation.eulerAngles += new Vector3(eulerPitch, eulerYaw, 0.0f);
         CurrentOrientationFromPlayer = CurrentRotation * Vector3.forward;
+        push = false;
+        theSlider.GetComponent<Slider>().maxValue = maxPower;
+        score.GetComponent<Text>();
     }
 
     void Update()
@@ -104,8 +126,55 @@ public class KinematicInput : MonoBehaviour
             jumpStartRequest = false;
         }
 
-        //if (KeyCode(Keypress))
+        //Roll Right
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            Debug.Log("Rolling Right!");
+            zPos_0 = rigidBody.transform.position.x;
+            if (maxTime > timeElapsed)
+            {
+                timeElapsed += Time.fixedDeltaTime;
+                forceVector.z = force * timeElapsed + (0.5f * decceleration * (timeElapsed * timeElapsed));
+            }
+            rigidBody.MovePosition((forceVector + transform.position) * Time.fixedDeltaTime);
+        }
+
+        if (Input.GetKeyDown("space"))
+        {
+            push = true;
+            timeElapsed = 0f;
+            maxTime = -force / decceleration;
+        }
+        if (!push)
+        //charging slider
+        {
+            force = Mathf.Abs(Mathf.Sin(Time.time * chargeRate) * maxPower);
+        }
+        theSlider.GetComponent<Slider>().value = force;
+
+        Score();
+
+        if (Input.GetKeyDown("z"))
+        {
+            rb.transform.position = spawn.transform.position;
+            force = 0f;
+            forceVector = UnityEngine.Vector3.zero;
+            push = false;
+        }
+        // Vector3 targetPosition = rigidBody.position + movementVector;
+        //xPos = rigidBody.transform.position.z;
     }
+
+      //  //Roll Left
+      //  if (Input.GetKeyDown(KeyCode.Q))
+      //  {
+       //     Debug.Log("Rolling Left!");
+        //    Vector3 newPosition = transform.position + (transform.forward * Time.deltaTime);
+        //    rigidBody.MovePosition(newPosition);
+      //  }
+
+        //if (KeyCode(Keypress))
+  //  }
 
     //void StartFalling()
     //{
@@ -224,7 +293,7 @@ public class KinematicInput : MonoBehaviour
         horizontalVector.z = Input.GetAxis("Vertical");
 
         MovementHandler();
-
+        
         StateMachine();
     }
 
@@ -236,6 +305,13 @@ public class KinematicInput : MonoBehaviour
         Vector3 targetPosition = rigidBody.position + movementVector;
 
         rigidBody.MovePosition(targetPosition);
+
+        
+
+        if (Input.GetKeyUp(KeyCode.E))
+        {
+
+        }
     }
 
     //private bool isOnGround()
@@ -287,6 +363,15 @@ public class KinematicInput : MonoBehaviour
         if (other.gameObject.CompareTag("Finish"))
         {
             SceneManager.LoadScene("WinScene");
+        }
+    }
+
+    void Score()
+    {
+        if (cube)
+        {
+            float dist = UnityEngine.Vector3.Distance(cube.position, cubeie.position);
+            score.text = ("Score is: ") + dist;
         }
     }
 }

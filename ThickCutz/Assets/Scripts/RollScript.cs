@@ -15,7 +15,8 @@ public class RollScript : MonoBehaviour
     public float maxPower;
     float zPos_0;
     public float force = 500f;
-    public bool push;
+    public bool rollRight;
+    public bool rollLeft;
     public Transform cube;
     public Transform cubeie;
     public Text score;
@@ -27,22 +28,35 @@ public class RollScript : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        push = false;
+        rollRight = false;
+        rollLeft = false;
         theSlider.GetComponent<Slider>().maxValue = maxPower;
         score.GetComponent<Text>();
-
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown("space"))
+        if (Input.GetKeyDown("e"))
         {
-            push = true;
+            rollRight = true;
             timeElapsed = 0f;
             maxTime = -force / decceleration;
         }
-        if (!push)
+        if (Input.GetKeyDown("q"))
+        {
+            rollLeft = true;
+            timeElapsed = 0f;
+            maxTime = -force / decceleration;
+        }
+        if (!rollRight)
+            //charging slider
+        {
+            force = Mathf.Abs(Mathf.Sin(Time.time * chargeRate) * maxPower);
+        }
+        theSlider.GetComponent<Slider>().value = force;
+        if (!rollLeft)
+        //charging slider
         {
             force = Mathf.Abs(Mathf.Sin(Time.time * chargeRate) * maxPower);
         }
@@ -55,18 +69,29 @@ public class RollScript : MonoBehaviour
             rb.transform.position = spawn.transform.position;
             force = 0f;
             forceVector = UnityEngine.Vector3.zero;
-            push = false;
+            rollRight = false;
+            rollLeft = false;
         }
     }
     private void FixedUpdate()
     {
-        if (push)
+        if (rollRight)
         {
-            zPos_0 = rb.transform.position.z;
+            zPos_0 = rb.transform.position.x;
             if (maxTime > timeElapsed)
             {
                 timeElapsed += Time.fixedDeltaTime;
-                forceVector.z = force * timeElapsed + (0.5f * decceleration * (timeElapsed * timeElapsed));  
+                forceVector.x = force * timeElapsed + (0.5f * decceleration * (timeElapsed * timeElapsed));  
+            }
+            rb.MovePosition((forceVector + transform.position) * Time.fixedDeltaTime);
+        }
+        if (rollLeft)
+        {
+            zPos_0 -= rb.transform.position.x;
+            if (maxTime > timeElapsed)
+            {
+                timeElapsed += Time.fixedDeltaTime;
+                forceVector.x = force * timeElapsed + (0.5f * decceleration * (timeElapsed * timeElapsed));
             }
             rb.MovePosition((forceVector + transform.position) * Time.fixedDeltaTime);
         }
