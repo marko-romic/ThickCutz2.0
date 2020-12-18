@@ -19,7 +19,7 @@ public class KinematicInput : MonoBehaviour
     public float forceMult = 200;
     public float xPos;
     public UnityEngine.Vector3 forceVector;
-    Rigidbody rb;
+    //Rigidbody rb;
     public float decceleration = 15f;
     public float timeElapsed;
     public float maxTime;
@@ -156,7 +156,7 @@ public class KinematicInput : MonoBehaviour
 
         if (Input.GetKeyDown("z"))
         {
-            rb.transform.position = spawn.transform.position;
+            rigidBody.transform.position = spawn.transform.position;
             force = 0f;
             forceVector = UnityEngine.Vector3.zero;
             push = false;
@@ -188,8 +188,20 @@ public class KinematicInput : MonoBehaviour
 
     void FixedUpdate()
     {
+        //AMAZING CAMERA ATTEMPTS
+
         Vector3 Movement = MainCamera.transform.right * input.x * speed * Time.fixedDeltaTime;
-        Movement += MainCamera.transform.forward * input.y * speed * Time.fixedDeltaTime;
+        //Vector3 Movement = Quaternion.MainCamera.RotateTowards(transform.rotation) * input.x * speed * Time.deltaTime;
+        //Vector3 Movement = MainCamera.transform.Rotate(Vector3, Time.deltaTime, Space.World);
+        //Vector3 Movement = MainCamera.transform.Rotate(rigidBody.position.x, transform.position.y, Time.deltaTime) //Mathf.Lerp(transform.position, t, input.x * Time.deltaTime));
+        //Movement += MainCamera.transform.forward * input.y * speed * Time.fixedDeltaTime;
+
+        //Attempt to rotate player with camera
+
+        //Vector3 Rotation = rb.transform.position * input.x * speed * Time.fixedDeltaTime;
+        //Rotation += rb.transform.forward * input.y * speed * Time.fixedDeltaTime;
+
+        //Previous Camera script 
 
         //transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.rotation.x, MainCamera.transform.rotation.eulerAngles.y,transform.rotation.z), MainCamera.GetComponent<CameraControls>().rotationSpeed);
         //transform.rotation = Quaternion.Euler(0, transform.rotation.y, 0);

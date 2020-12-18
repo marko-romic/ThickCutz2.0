@@ -1,21 +1,57 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class ThirdPersonMovement : MonoBehaviour
 {
-    public float Speed;
+    public float Speed = 1f;
 
-    void Update()
+    public Rigidbody rb;
+    public float turnSmoothTime = 0.1f;
+    float turnSmoothVelocity;
+
+    public Camera MainCam;
+
+    private void Start()
     {
-        PlayerMovement();
+
+        rb = GetComponent<Rigidbody>();
+
+        rb.isKinematic = true;
+
     }
-
-    void PlayerMovement()
+    void FixedUpdate()
     {
+
+        MovementHandler();
+
+    }
+    void MovementHandler()
+    {
+
         float hor = Input.GetAxis("Horizontal");
         float ver = Input.GetAxis("Vertical");
-        Vector3 playerMovement = new Vector3(hor, 0f, ver) * Speed * Time.deltaTime;
-        transform.Translate(playerMovement, Space.Self);
+
+        //values for movement and rotation from camera perspective
+        Vector3 direction = MainCam.transform.right * hor + MainCam.transform.forward * ver; 
+        direction.y = 0;
+
+        if (direction.magnitude >= 0.1f)
+        {
+            //player turning based off of angles targeted
+            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
+
+            //turning the player
+            rb.rotation = Quaternion.Euler(0f, angle, 0f);
+            
+            //THIS is moving the character
+            rb.MovePosition(rb.position + direction * Speed * Time.fixedDeltaTime);
+        }
+    }
+    void Attack()
+    {
+       
     }
 }
