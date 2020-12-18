@@ -14,6 +14,8 @@ public class ThirdPersonMovement : MonoBehaviour
 
     public Camera MainCam;
     private Animator Animator;
+    public float SprintSpeed;
+
     
     private void Start()
     {
@@ -25,16 +27,18 @@ public class ThirdPersonMovement : MonoBehaviour
 
     void Update()
     {
-        //if (rb.transform.position)
+
+       
+
         if (Input.GetKey("w"))
         {
-            Animator.SetBool("isWalking", true);
+            Animator.SetBool("isRunning", true);
         }
         if (!Input.GetKey("w"))
         {
-            Animator.SetBool("isWalking", false);
+            Animator.SetBool("isRunning", false);
         }
-        if (Input.GetKey("a"))
+        /*if (Input.GetKey("a"))
         {
             Animator.SetBool("isWalking", true);
         }
@@ -57,7 +61,7 @@ public class ThirdPersonMovement : MonoBehaviour
         if (!Input.GetKey("s"))
         {
             Animator.SetBool("isWalking", false);
-        }
+        }*/
     }
     void FixedUpdate()
     {
