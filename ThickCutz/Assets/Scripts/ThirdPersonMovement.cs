@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.Animations;
 
 public class ThirdPersonMovement : MonoBehaviour
 {
@@ -12,14 +13,51 @@ public class ThirdPersonMovement : MonoBehaviour
     float turnSmoothVelocity;
 
     public Camera MainCam;
-
+    private Animator Animator;
+    
     private void Start()
     {
-
+        Animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
 
         rb.isKinematic = true;
+    }
 
+    void Update()
+    {
+        //if (rb.transform.position)
+        if (Input.GetKey("w"))
+        {
+            Animator.SetBool("isWalking", true);
+        }
+        if (!Input.GetKey("w"))
+        {
+            Animator.SetBool("isWalking", false);
+        }
+        if (Input.GetKey("a"))
+        {
+            Animator.SetBool("isWalking", true);
+        }
+        if (!Input.GetKey("a"))
+        {
+            Animator.SetBool("isWalking", false);
+        }
+        if (Input.GetKey("d"))
+        {
+            Animator.SetBool("isWalking", true);
+        }
+        if (!Input.GetKey("d"))
+        {
+            Animator.SetBool("isWalking", false);
+        }
+        if (Input.GetKey("s"))
+        {
+            Animator.SetBool("isWalking", true);
+        }
+        if (!Input.GetKey("s"))
+        {
+            Animator.SetBool("isWalking", false);
+        }
     }
     void FixedUpdate()
     {
@@ -48,6 +86,8 @@ public class ThirdPersonMovement : MonoBehaviour
             
             //THIS is moving the character
             rb.MovePosition(rb.position + direction * Speed * Time.fixedDeltaTime);
+
+
         }
     }
     void Attack()
