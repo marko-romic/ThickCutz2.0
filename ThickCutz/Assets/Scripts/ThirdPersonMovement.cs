@@ -14,6 +14,7 @@ public class ThirdPersonMovement : MonoBehaviour
     float turnSmoothVelocity;
     private float lastStateChange = 0.0f;
     public Rigidbody rb;
+    //public Rigidbody eRb;
 
     public Camera MainCam;
     private Animator Animator;
@@ -40,6 +41,7 @@ public class ThirdPersonMovement : MonoBehaviour
 
         Animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
+        // eRb = GetComponent<Rigidbody>(); //rb of enemy for knockback
 
         rb.isKinematic = true;
 
@@ -173,4 +175,19 @@ public class ThirdPersonMovement : MonoBehaviour
             }
         }
     }
+
+    //Knockback
+        //public float force = 500; // adjust the impact force
+
+    /*void OnTriggerEnter(Collider other)
+    {
+        Vector3 dir = other.transform.position - transform.position;
+        dir.y = 0; // keep the force horizontal
+                   
+        if (other.gameObject.tag == "Enemy")
+        { // use AddForce for rigidbodies:
+            rb.AddForce(-transform.forward * force);
+        }
+    }*/
 }
+

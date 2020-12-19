@@ -2,90 +2,111 @@
 using System.Collections.Generic;
 using System.Resources;
 using UnityEngine;
-using UnityEngine.Assertions.Must;
+//using UnityEngine.Assertions.Must;
 
-public class roll : MonoBehaviour
+public class Roll : MonoBehaviour
 {
-    public GameObject StartObj;
-    public GameObject RollTargetRight;
-    public GameObject RollTargetLeft;
-    public float LERPDuration = 0;
-    public MovementState currentState;
+    //public GameObject StartObj;
+    //public GameObject RollTargetRight;
+    //public GameObject RollTargetLeft;
+    //public float LERPDuration = 0;
+    //public float rollTimer = 0.5f;
+
+    private MovementState currentState;
+    //private bool RollingRight;
+    //private bool RollingLeft;
+
+    public float RollTimer = 0.5f;
+    public float RollingTimer;
 
     public Rigidbody rb;
-    public float RollSpeed;
+    public float RollSpeed = 1f;
 
-    public enum MovementState{
+    public enum MovementState
+    {
         rollingRight,
         rollingLeft,
         neutral
     }
-
+    //private Vector3 rightRoll;
+    //private Vector3 leftRoll;
     //private Vector3 target;
-    private Vector3 startPos;
-    private Vector3 endPos;
-    private float accumatedTimeSinceLERPStart;
+    //private Vector3 startPos;
+    //private Vector3 endPos;
+    //private float accumatedTimeSinceLERPStart;
 
     // Start is called before the first frame update
     void Start()
     {
-        if (StartObj != null)
+        currentState = MovementState.neutral;
+        rb = GetComponent<Rigidbody>();
+        /*if (StartObj != null)
         {
             startPos = StartObj.transform.position;
 
-        }
+        }*/
 
-        if (RollTargetRight != null)
+        /*if (RollTargetRight != null)
         {
             endPos = RollTargetRight.transform.position;
         }
 
-        accumatedTimeSinceLERPStart = 0.0f;
+        accumatedTimeSinceLERPStart = 0.0f;*/
     }
 
-    // Update is called once per frame
+    void FixedUpdate()
+    {
+        StateMachine();
+    }
     void Update()
     {
         if (Input.GetKey("e"))
         {
+
+            RollingTimer = RollTimer;
             currentState = MovementState.rollingRight;
-            
         }
+
         if (Input.GetKey("q"))
         {
+            RollingTimer = RollTimer;
             currentState = MovementState.rollingLeft;
 
         }
 
-        if (currentState != MovementState.neutral)
-        {
-            RollHandler();
+        //if (currentState != MovementState.neutral)
+        //{
+            //RollHandler();
 
-        }
-        else if(accumatedTimeSinceLERPStart > 0.0f)
+        //}
+        /*else if(accumatedTimeSinceLERPStart > 0.0f)
         {
             accumatedTimeSinceLERPStart = 0.0f;
-        }
+        }*/
     }
 
-    void RollHandler()
+    void StateMachine()
     {
-        Vector3 RollVector = new Vector3();
+        //Vector3 RollVector = new Vector3();
         switch (currentState)
         {
             case MovementState.rollingRight:
-                endPos = RollTargetRight.transform.position;
-                RollVector = transform.right * RollSpeed * Time.fixedDeltaTime;
-                break;
+                RollingRightHandler();
+                /*rightRoll = RollTargetRight.transform.position;
+                RollVector = transform.right * RollSpeed * Time.fixedDeltaTime;*/
+                return;
 
             case MovementState.rollingLeft:
-                endPos = RollTargetLeft.transform.position;
-                RollVector = -transform.right * RollSpeed * Time.fixedDeltaTime;
-                break;
-            
+                RollingLeftHandler();
+                /*endPos = RollTargetLeft.transform.position;
+                RollVector = -transform.right * RollSpeed * Time.fixedDeltaTime;*/
+                return;
+
+            case MovementState.neutral:
+                return;
         }
 
-        if (transform.position == endPos)
+        /*if (transform.position == endPos)
         {
             currentState = MovementState.neutral;
         }
@@ -93,13 +114,34 @@ public class roll : MonoBehaviour
         {
             accumatedTimeSinceLERPStart += Time.deltaTime;
             Vector3 TargetPosition = rb.position; // + RollVector;
-            rb.MovePosition(TargetPosition); 
+            TargetPosition.y = 0f;
+            rb.MovePosition(TargetPosition); */
 
+    }
+    void RollingRightHandler()
+    {
+        RollingTimer -= Time.deltaTime; //deincrementing
+        rb.MovePosition(transform.right * RollSpeed * Time.deltaTime);
+
+        if (RollingTimer == 0f) // seeing if rolling timer is equal to 0
+        {
+            currentState = MovementState.neutral; //bring state back to idle
         }
-        
+    }
+    void RollingLeftHandler()
+    {
+        RollingTimer -= Time.deltaTime; //deincrementing
+        rb.MovePosition(-transform.right * RollSpeed * Time.deltaTime);
+
+        if (RollingTimer == 0f) // seeing if rolling timer is equal to 0
+        {
+            currentState = MovementState.neutral; //bring state back to idle
+        }
+    } 
+}
 
         
-        if (accumatedTimeSinceLERPStart < LERPDuration)
+        /*if (accumatedTimeSinceLERPStart < LERPDuration)
         {
             // Step 1, pass the accumulated time to TimeFunction to get the correct T value
             float t = EasingFunctions.TimeFunction(accumatedTimeSinceLERPStart, LERPDuration);
@@ -113,4 +155,4 @@ public class roll : MonoBehaviour
         }
         
     }
-}
+}*/
