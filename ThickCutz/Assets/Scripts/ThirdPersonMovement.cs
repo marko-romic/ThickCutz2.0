@@ -1,28 +1,48 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.Animations;
 
 public class ThirdPersonMovement : MonoBehaviour
 {
     public float Speed = 1f;
-
-    public Rigidbody rb;
+    public float attackTimer = 0.5f;
+    public float attackTimerInAction;
     public float turnSmoothTime = 0.1f;
     float turnSmoothVelocity;
+    private float lastStateChange = 0.0f;
+    public Rigidbody rb;
 
     public Camera MainCam;
     private Animator Animator;
-    public float SprintSpeed;
 
     
+
+    PlayerState currentState = PlayerState.onGround;
+
+    public enum PlayerState
+    {
+        onGround,
+        moveState,
+        fallingDown,
+        idle,
+        attack,
+        guard,
+        parry,
+        roll,
+    }
+
     private void Start()
     {
+        currentState = PlayerState.idle;
+
         Animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
 
         rb.isKinematic = true;
+
     }
 
     void Update()
@@ -60,11 +80,27 @@ public class ThirdPersonMovement : MonoBehaviour
         {
             Animator.SetBool("isWalking", false);
         }*/
+
+        //This is where the attackTimerInAction resets to the attackTimer so we can attack again
+        if (Input.GetButtonDown("Attack"))
+        {
+            Animator.SetTrigger("Attack");
+            attackTimerInAction = attackTimer;
+            currentState = PlayerState.attack;
+        }
+        //guard bool
+        if (Input.GetButtonDown("Guard"))
+        {
+            Animator.SetBool("Guard", true);
+            currentState = PlayerState.guard;
+        }
     }
     void FixedUpdate()
     {
 
         MovementHandler();
+        StateMachine();
+        
 
     }
     void MovementHandler()
@@ -74,7 +110,7 @@ public class ThirdPersonMovement : MonoBehaviour
         float ver = Input.GetAxis("Vertical");
 
         //values for movement and rotation from camera perspective
-        Vector3 direction = MainCam.transform.right * hor + MainCam.transform.forward * ver; 
+        Vector3 direction = MainCam.transform.right * hor + MainCam.transform.forward * ver;
         direction.y = 0;
 
         //the float in the animator is being set by the magnitude(total value of vector) of the direction
@@ -88,15 +124,53 @@ public class ThirdPersonMovement : MonoBehaviour
 
             //turning the player
             rb.rotation = Quaternion.Euler(0f, angle, 0f);
-            
+
             //THIS is moving the character
             rb.MovePosition(rb.position + direction * Speed * Time.fixedDeltaTime);
             
-
         }
     }
-    void Attack()
+    public void StateMachine()
     {
-       
+        switch (currentState)
+        {
+            case PlayerState.idle:
+
+                return;
+
+            case PlayerState.attack:
+                AttackState();
+                return;
+
+            case PlayerState.roll:
+                //insert roll function
+                return;
+
+            case PlayerState.guard:
+                GuardState();
+                return;
+
+            case PlayerState.parry:
+                //insert parry handler
+                return;
+
+        }
+        void AttackState()
+        {
+            attackTimerInAction -= Time.deltaTime; //deincrementing
+
+            if (attackTimerInAction == 0f) // seeing if attack timer is equal to 0
+            {
+                currentState = PlayerState.idle; //bring state back to idle
+            }
+        }
+        void GuardState()
+        {
+            if (Input.GetButtonUp("Guard")) // Bug where guard sometimes switches off back to idle. However 6/10 times it will stay in guard unless a trigger is hit
+            {
+                Animator.SetBool("Guard", false);
+                currentState = PlayerState.idle;
+            }
+        }
     }
 }
