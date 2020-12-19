@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class PlayerControl : MonoBehaviour
 {
     Color colorStartMajorDamage = Color.red;
@@ -27,6 +27,13 @@ public class PlayerControl : MonoBehaviour
     }
 
     // Update is called once per frame
+
+    void OnMouseUp()
+    {
+        SceneManager.LoadScene("city 2019");
+    }
+
+
     void Update()
     {
         if (currentMajorDamageTimer > 0.0f)

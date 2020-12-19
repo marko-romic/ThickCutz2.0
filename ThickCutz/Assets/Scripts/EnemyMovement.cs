@@ -75,7 +75,7 @@ public class EnemyMovement : MonoBehaviour
         //got the if else working instead of statemachine. time crunch so moving on
     }
 
-    public void OnTriggerEnter(Collision other) //attempted to add knockback on hit with player sword
+    public void OnCollisionEnter(Collision other) //attempted to add knockback on hit with player sword
     {
         if (other.gameObject.tag == "Sword")
         {

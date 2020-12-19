@@ -344,11 +344,11 @@ public class KinematicInput : MonoBehaviour
     void OnGUI()
     {
         // Add here any debug text that might be helpful for you
-        GUI.Label(new Rect(10, 10, 100, 20), "Angle " + angleDifferenceForward.ToString(), myGUIStyle);
+        //GUI.Label(new Rect(10, 10, 100, 20), "Angle " + angleDifferenceForward.ToString(), myGUIStyle);
 
         if (rolling == true)
         {
-            GUI.Label(new Rect(40, 10, 100, 20), "Rolling" + angleDifferenceForward.ToString(), myGUIStyle);
+           // GUI.Label(new Rect(40, 10, 100, 20), "Rolling" + angleDifferenceForward.ToString(), myGUIStyle);
         }
     }
 
