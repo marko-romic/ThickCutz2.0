@@ -168,8 +168,8 @@ public class ThirdPersonMovement : MonoBehaviour
         {
             if (Input.GetButtonUp("Guard")) // Bug where guard sometimes switches off back to idle. However 6/10 times it will stay in guard unless a trigger is hit
             {
-                Animator.SetBool("Guard", false);
-                currentState = PlayerState.idle;
+                Animator.SetBool("Guard", false); //setting bool to false
+                currentState = PlayerState.idle;//setting the state back to idle when false
             }
         }
     }
